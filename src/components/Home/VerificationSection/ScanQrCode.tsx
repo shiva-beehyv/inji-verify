@@ -2,6 +2,7 @@ import React from 'react';
 import {Box, Button, Grid, Typography} from "@mui/material";
 import scanQr from "../../../assets/scanner-ouline.svg";
 import StyledButton from "./commons/StyledButton";
+import {ImportFromFile} from "./FileReader";
 
 const ScanQrCode = ({setActiveStep}: {
     setActiveStep: (activeStep: number) => void
@@ -16,9 +17,15 @@ const ScanQrCode = ({setActiveStep}: {
                 <img src={scanQr} width={350}/>
             </Grid>
             <Grid item xs={12}>
-                <StyledButton style={{margin: "40px 0"}} onClick={() => setActiveStep(1)}>
+                <StyledButton style={{margin: "40px 0 10px 0"}} onClick={() => setActiveStep(1)}>
                     Scan the QR Code
                 </StyledButton>
+            </Grid>
+            <Grid item xs={12}>
+                OR
+            </Grid>
+            <Grid item xs={12}>
+                <ImportFromFile setQrData={(qrData) => {console.log(qrData)}}/>
             </Grid>
         </Grid>
     );
