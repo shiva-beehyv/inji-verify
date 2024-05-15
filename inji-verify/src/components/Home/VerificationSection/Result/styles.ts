@@ -26,9 +26,8 @@ export const VcDisplay = styled(Grid)`
     margin: auto;
     background: white;
     border-radius: 12px;
-    padding: 5px 10px;
+    padding: 15px 10px;
     box-shadow: 0 3px 15px #0000000F;
-    max-height: 320px;
     overflow-y: hidden;
 `
 
@@ -42,7 +41,7 @@ export const VcPropertyKey = styled(Typography)`
 `
 
 export const SubHeading = styled(Typography)`
-    font: normal normal 600 20px/22px Inter
+    font: normal normal bold 16px/20px Inter
 `
 
 export const VcPropertyValue = styled(Typography)`

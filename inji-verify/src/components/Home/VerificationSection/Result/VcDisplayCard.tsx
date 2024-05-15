@@ -16,7 +16,6 @@ import {
 } from "./styles";
 
 const renderNestedObject = (propertyName: string, subObject: any): ReactElement => {
-    console.log({propertyName, subObject})
     return (<>
 
             {propertyName && <SubHeading>
@@ -25,13 +24,12 @@ const renderNestedObject = (propertyName: string, subObject: any): ReactElement 
             <List style={{width: "95%", paddingLeft: 15}}>
                 {
                     Object.keys(subObject)
-                        .filter(key => key?.toLowerCase() !== "id" && key?.toLowerCase() !== "type")
                         .map(key => {
                             return (typeof subObject[key]) === "object" && !Array.isArray(subObject[key])
                                 ? renderNestedObject(key, subObject[key])
-                                : (<ListItem style={{width: '100%', margin: "0px auto", padding: "2px 0px"}} key={key}>
-                                    <ListItemText style={{margin: "4px auto", padding: "2px 0px"}} primary={`${convertToTitleCase(key)}: `}/>
-                                    <ListItemText style={{margin: "4px auto", padding: "2px 0px", textAlign: "right", justifyContent: "left"}} secondary={getDisplayValue(subObject[key])} />
+                                : (<ListItem style={{width: '100%', margin: "3px 0px", padding: 0}} key={key}>
+                                    <ListItemText style={{margin: "3px 0px", padding: 0}} secondary={`${convertToTitleCase(key)}: `}/>
+                                    <ListItemText style={{margin: "3px 0px", padding: 0, textAlign: "right", justifyContent: "left", fontSize: 14}} primary={getDisplayValue(subObject[key])} sx={{fontSize: 14}}/>
                                 </ListItem>)
                         })
                 }
@@ -41,6 +39,9 @@ const renderNestedObject = (propertyName: string, subObject: any): ReactElement 
 }
 
 function VcDisplayCard({vc, setActiveStep}: {vc: any, setActiveStep: SetActiveStepFunction}) {
+    const vcData = vc.credentialSubject;
+    delete vcData.id;
+    delete vcData.type;
     return (
         <Box>
             <VcDisplay container>

@@ -9,6 +9,7 @@ const lowercaseStartRegex: RegExp = /^([a-z])/;
 export const convertToTitleCase = (text: string): string => {
     if (!text) return "";
     return text
+        .replaceAll("_", " ")
         // Once match is found, split the words by adding space at the beginning of the natch and ensure the first letter is capital
         .replace(splitCamelCaseRegex, (match) => ` ${match.charAt(0).toUpperCase()}${match.slice(1)}`)
         // convert the first char of 'text' to capital case
