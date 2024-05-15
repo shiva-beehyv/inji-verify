@@ -32,6 +32,23 @@ const Result = ({vc, setActiveStep, vcStatus}: {
             setVcDisplayCardPositioning(positioning);
         }
     }, [resultSectionRef]);
+    vc = {
+        "credentialSubject": {
+            "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+            "ageUnder": 16,
+            "parent": {
+                "id": "did:example:ebfeb1c276e12ec211f712ebc6f",
+                "type": "Mother",
+                "name": "Priya",
+                "dob": "some value",
+                "relation": {
+                    "name": "Priya",
+                    "dob": "some value",
+                }
+            }
+        }
+    }
+    vcStatus = {status: "OK", checks: []};
 
     let success = vcStatus?.status === "OK";
     // validate vc and show success/failure component
