@@ -55,34 +55,49 @@ function VcDisplayCard({vc}: {vc: any}) {
     const credentialDisplayProperties: any = credentialDetails?.credential_definition?.credentialSubject;
 
     return (
-        <div>
-            <div
-                className={`grid xs:w-[90vw] md:w-[400px] m-auto bg-white rounded-[12px] py-[5px] px-[15px] shadow-lg`}>
+        <div className="xs:w-[90vw] md:w-[400px]">
+            <div className="m-auto bg-white rounded-[12px] pt-1 pb-5 px-[15px] shadow-lg">
                 {
                     credentialDisplayProperties && (
-                        <div className="grid">
-                            <div>
-                                Credential Issuer: {wellKnownProperties.credential_issuer}
+                        <>
+                            <div
+                                className={`justify-start py-2.5 px-1 xs:col-end-13 w-[100%] text-center`}
+                            >
+                                <img className="mx-auto my-1"
+                                     width={100}
+                                     src={credentialDetails?.display[0].logo.url}
+                                     alt={credentialDetails?.display[0].logo.alt_text}
+                                />
+                                <p className="font-medium text-[14px] mx-auto my-1">
+                                    {credentialDetails?.display[0].name}
+                                </p>
                             </div>
-                            <div>
-                                Credential Name: {credentialDetails?.display[0].name}
-                            </div>
-                            <div>
-                                Credential Logo: {<img width={100}
-                                                       src={credentialDetails?.display[0].logo.url}
-                                                       alt={credentialDetails?.display[0].logo.alt_text}/>}
-                            </div>
-                        </div>
+                            <div className="h-1 border-b-[1px] border-gray-200 mb-2"/>
+                        </>
                     )
                 }
+                <div
+                    className={`grid`}>
+                    {
+                        vc ? (<DisplayVc loadingWellKnown={loadingWellKnown}
+                                         credentialDisplayProperties={credentialDisplayProperties} vc={vc}/>)
+                            : (
+                                <div className="grid content-center justify-center w-[100%] text-[#000000] opacity-10">
+                                    <DocumentIcon/>
+                                </div>
+                            )
+                    }
+                </div>
+
                 {
-                    vc ? (<DisplayVc loadingWellKnown={loadingWellKnown}
-                                     credentialDisplayProperties={credentialDisplayProperties} vc={vc}/>)
-                        : (
-                            <div className="grid content-center justify-center w-[100%] text-[#000000] opacity-10">
-                                <DocumentIcon/>
-                            </div>
-                        )
+                    credentialDisplayProperties && (
+                        <>
+                            <div className="h-1 border-b-[1px] border-gray-200 mb-2"/>
+                            <p className="text-[12px] text-right w-[100%] pr-3">
+                                Issued by <b>{wellKnownProperties.credential_issuer}</b>
+                            </p>
+                        </>
+                    )
                 }
             </div>
             <div className="grid content-center justify-center">
