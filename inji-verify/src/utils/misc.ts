@@ -7,6 +7,7 @@ const splitCamelCaseRegex: RegExp = /([A-Z][a-z]+)/g;
 const lowercaseStartRegex: RegExp = /^([a-z])/;
 
 export const convertToTitleCase = (text: string): string => {
+    console.log(`Converting ${text}`)
     if (!text) return "";
     return text
         // Once match is found, split the words by adding space at the beginning of the natch and ensure the first letter is capital
@@ -24,4 +25,16 @@ export const getDisplayValue = (data: any): string => {
         return displayValue.slice(0, displayValue.length - 2);
     }
     return data?.toString();
+}
+
+
+export const fetchWellknownProperties = async (url: string | null) => {
+    if (!url) return null;
+    try {
+        const response = await fetch(url);
+        return await response.json();
+    }
+    catch (error) {
+        console.log(`Error occurred while fetching display properties of the credential. url: ${url}, error: ${error}`)
+    }
 }

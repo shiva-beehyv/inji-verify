@@ -2,8 +2,10 @@ import React from 'react';
 import VerificationProgressTracker from "../components/Home/VerificationProgressTracker";
 import VerificationSection from "../components/Home/VerificationSection";
 import Copyrights from "../components/Home/VerificationProgressTracker/Copyrights";
+import {convertToTitleCase} from "../utils/misc";
 
 function Home(props: any) {
+    console.log(convertToTitleCase("FatherDob"))
     return (
         <div>
             <div className="grid columns-12">
