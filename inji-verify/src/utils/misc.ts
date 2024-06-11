@@ -5,6 +5,7 @@ import {
     InternetConnectivityCheckEndpoint,
     VerificationStepsContent
 } from "./config";
+import {createBrowserHistory} from "history";
 
 const splitCamelCaseRegex: RegExp = /([A-Z][a-z]+)/g;
 
@@ -64,8 +65,8 @@ export const checkInternetStatus = async (): Promise<boolean> => {
     }
 }
 
-export const navigateToOffline = () => {
-    window.location.assign("/offline");
-}
+// export const navigateToOffline = () => {
+//     createBrowserHistory().push("/offline");
+// }
 
 export const convertToId = (content: string) => content.toLowerCase().replaceAll(" ", "-");
