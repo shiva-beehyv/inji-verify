@@ -5,26 +5,28 @@ import {useAppDispatch} from "../../../redux/hooks";
 import {goHomeScreen, qrReadInit, verificationInit} from "../../../redux/features/verification/verification.slice";
 import {raiseAlert} from "../../../redux/features/alerts/alerts.slice";
 import {checkInternetStatus, navigateToOffline} from "../../../utils/misc";
+import {updateInternetConnectionStatus} from "../../../redux/features/application-state/application-state.slice";
 
 function UploadButton({ displayMessage }: {displayMessage: string}) {
+    const dispatch = useAppDispatch();
     return (
         <label
-            className="bg-[#FFFFFF] bg-no-repeat rounded-[9999px] border-2 border-primary font-bold text-primary w-[350px] cursor-pointer text-center px-0 py-[18px]"
+            className="hover:bg-primary bg-[#FFFFFF] hover:text-[#FFFFFF] text-primary bg-no-repeat rounded-[9999px] border-2 border-primary font-bold w-[350px] cursor-pointer text-center px-0 py-[12px] text-[16px] fill-[#ff7f00] hover:fill-white"
             htmlFor={"upload-qr"}
             onClick={async (event) => {
+                dispatch(updateInternetConnectionStatus({internetConnectionStatus: "LOADING"}));
+                event.stopPropagation();
+                event.preventDefault();
                 let isOnline = await checkInternetStatus();
-                console.log({isOnline})
-                if (!isOnline) {
-                    event.preventDefault();
-                    navigateToOffline();
-                }
+                dispatch(updateInternetConnectionStatus({internetConnectionStatus: isOnline ? "ONLINE" : "OFFLINE"}));
+                if (isOnline) document.getElementById("upload-qr")?.click();
             }}
         >
             <span className="flex m-auto content-center justify-center w-[100%]">
                 <span className="inline-grid mr-1.5">
-                    <UploadIcon/>
+                    <UploadIcon className="fill-inherit"/>
                 </span>
-                <span className="inline-grid">
+                <span id="upload-qr-code-button" className="inline-grid">
                     {displayMessage}
                 </span>
             </span>
@@ -51,6 +53,8 @@ export const UploadQrCode = ({displayMessage, className}: { displayMessage: stri
                         console.log(`File size: `, file?.size);
                         dispatch(goHomeScreen({}));
                         dispatch(raiseAlert({...AlertMessages.unsupportedFileSize, open: true}))
+                        if (e?.target)
+                            e.target.value = ""; // clear the target to be able to read same file again
                         return;
                     }
                     dispatch(qrReadInit({method: "UPLOAD"}));
