@@ -23,7 +23,7 @@ function* verifyVC(vc: any) {
     const onLine: boolean = yield select((state: any) => state.appState.internetConnectionStatus);
     try {
         const status: VcStatus = yield call(verify, vc);
-        console.log("VC Status [logging in saga]: ", status);
+        console.log("VC Status [logging in saga]: ", status, vc);
         if (status?.checks?.length >= 0 && status?.checks[0].proof === "NOK" && !onLine) {
             yield put(updateInternetConnectionStatus({internetConnectionStatus: "OFFLINE"}));
         }
