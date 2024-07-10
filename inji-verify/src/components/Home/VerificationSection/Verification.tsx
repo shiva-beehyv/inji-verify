@@ -7,6 +7,8 @@ import {useAppDispatch} from "../../../redux/hooks";
 import {goHomeScreen} from "../../../redux/features/verification/verification.slice";
 import {VerificationSteps} from "../../../utils/config";
 import {useVerificationFlowSelector} from "../../../redux/features/verification/verification.selector";
+import QrScannerV2 from "./QrScannerV2";
+import QrScannerV3 from "./QrScannerV3";
 
 const Verification = () => {
     const dispatch = useAppDispatch();
@@ -23,7 +25,7 @@ const Verification = () => {
                 {
                     activeScreen === VerificationSteps[method].Verifying
                         ? (<Loader/>)
-                        : (<QrScanner/>)
+                        : (<QrScannerV3/>)
                 }
             </div>
             <div className="col-span-12">
