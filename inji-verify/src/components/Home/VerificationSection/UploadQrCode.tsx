@@ -10,19 +10,33 @@ import {AlertInfo} from "../../../types/data-types";
 import {useCallback, useEffect, useRef} from "react";
 import jsQR from "jsqr";
 import {
-    BrowserQRCodeReader,
+    /*BrowserQRCodeReader,*/
     QRCodeReader,
     BinaryBitmap,
     HybridBinarizer,
     RGBLuminanceSource,
-    MultiFormatReader, BarcodeFormat, DecodeHintType, BrowserMultiFormatReader
+    MultiFormatReader, BarcodeFormat, DecodeHintType, /*BrowserMultiFormatReader*/
 } from '@zxing/library';
+import { BrowserMultiFormatReader, BrowserQRCodeReader } from '@zxing/browser';
+
 import { pdfjs } from 'react-pdf';
 import QrScanner from 'qr-scanner';
 import { Document, Page } from 'react-pdf';
-
 import result from "./Result";
 import {BarcodeDetector} from "barcode-detector";
+
+// @ts-ignore
+// import {WorkerMessageHandler as pdfjsWorker} from "pdfjs-dist/build/pdf.worker.min.mjs";
+import * as pdfjsLib from 'pdfjs-dist';
+import {Dispatch} from "redux";
+
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+    'pdfjs-dist/build/pdf.worker.min.mjs',
+    import.meta.url,
+).toString();;
+
+
 
 function getBase64Data(data: string) {
 
@@ -91,8 +105,41 @@ const decodeQrCodeFromImage = async (imageData: ImageData | undefined) => {
 //     const qrCode = await decodeQrCodeFromImage(imageData);
 // };
 
+const readFromPdf = async (file: File, dispatch: Dispatch) => {
+    const pdf = await pdfjsLib.getDocument(URL.createObjectURL(file)).promise;
+    for (let i = 1; i <= pdf.numPages; i++) {
+        try {
+            const page = await pdf.getPage(i);
+            const viewport = page.getViewport({ scale: 1 });
+            const canvas = document.createElement('canvas');
+            if (!canvas) return;
+            const context = canvas.getContext('2d');
+            if (!context) return;
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            await page.render({ canvasContext: context, viewport: viewport }).promise;
+            // const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+
+            const image = document.createElement('img');
+            image.width = 200;
+            image.height = 200;
+            image.src = canvas.toDataURL();
+
+            const codeReader = new /*BrowserMultiFormatReader*/BrowserQRCodeReader();
+            const result = await codeReader.decodeFromImageElement(image);
+            console.log(`[pdf] Page - ${i}, Result: ${result}`);
+            dispatch(verificationInit({qrReadResult: {qrData: result.getText(), status: "SUCCESS"}, flow: "SCAN"}));
+        }
+        catch (error) {
+            console.log(`[pdf] Page - ${i}, Result: No result`);
+        }
+    }
+}
+
 function readQrFromImage(canvas: HTMLCanvasElement, file: File) {
-    const img = new Image();
+    const img = /*new Image()*/document.createElement("img");
+    img.width = 200;
+    img.height = 200;
     const context = canvas.getContext('2d');
     /*img.onload = () => {
         console.log("Loading image");
@@ -131,7 +178,7 @@ function readQrFromImage(canvas: HTMLCanvasElement, file: File) {
 
             const multiFormatReader = new BrowserMultiFormatReader();
             multiFormatReader.decodeFromImageUrl(URL.createObjectURL(file))
-                .then(result => {console.log("[zxing] Qr code result: ", result);})
+                .then(result => {console.log("[zxing] Qr code result: ", result.getText());})
                 .catch(error => {console.log("[zxing] Error occurred: ", error);});
         }
         catch (error) {
@@ -219,7 +266,7 @@ export const UploadQrCode = ({displayMessage, className}: { displayMessage: stri
                     readQrFromImage(canvas, file);
                 }
                 if (file.type === "application/pdf") {
-                    // readFromPdfFile(canvas, file);
+                    readFromPdf(file, dispatch);
                 }
             };
             reader.readAsDataURL(file);
@@ -263,7 +310,7 @@ export const UploadQrCode = ({displayMessage, className}: { displayMessage: stri
                                         status: "SUCCESS"
                                     }
                                 }));
-                            } else {
+                            } else if (getFileExtension(file.name) !== "pdf") {
                                 dispatch(raiseAlert({...AlertMessages.qrNotDetected, open: true}));
                                 dispatch(goHomeScreen({}));
                             }

@@ -1,10 +1,12 @@
 import { scanFile } from "@openhealthnz-credentials/pdf-image-qr-scanner";
 import {decode, generateQRData} from '@mosip/pixelpass';
 import {HEADER_DELIMITER, SUPPORTED_QR_HEADERS} from "./config";
+import {getFileExtension} from "./misc";
 
 export const scanFilesForQr = async (selectedFile) => {
     let scanResult = { data: null, error: null };
     try {
+        if (getFileExtension(selectedFile) === "pdf") return scanResult;
         scanResult.data = await scanFile(selectedFile);
     } catch (e) {
         // Example Error Handling
