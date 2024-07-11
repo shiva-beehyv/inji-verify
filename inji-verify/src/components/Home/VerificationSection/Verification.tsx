@@ -24,19 +24,21 @@ const Verification = () => {
                 }}>
                 {
                     activeScreen === VerificationSteps[method].Verifying
-                        ? (<Loader/>)
+                        ? (<>
+                            <Loader/>
+                            <div className="col-span-12">
+                                <StyledButton
+                                    id="verification-back-button"
+                                    className="w-[100%] lg:w-[350px] max-w-[280px] lg:max-w-none mt-[18px]"
+                                    onClick={() => {
+                                        dispatch(goHomeScreen({}))
+                                    }}>
+                                    Back
+                                </StyledButton>
+                            </div>
+                        </>)
                         : (<QrScannerV3/>)
                 }
-            </div>
-            <div className="col-span-12">
-                <StyledButton
-                    id="verification-back-button"
-                    className="w-[100%] lg:w-[350px] max-w-[280px] lg:max-w-none mt-[18px]"
-                    onClick={() => {
-                        dispatch(goHomeScreen({}))
-                    }}>
-                    Back
-                </StyledButton>
             </div>
         </div>
     );
