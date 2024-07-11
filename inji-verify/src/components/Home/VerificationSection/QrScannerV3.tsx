@@ -1,10 +1,9 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import { useQrReader } from 'react-qr-reader';
 import {useAppDispatch} from "../../../redux/hooks";
 import {goHomeScreen, verificationInit} from "../../../redux/features/verification/verification.slice";
 import {toggleTorch} from "../../../utils/video-utils";
-import {raiseAlert} from "../../../redux/features/alerts/alerts.slice";
 import StyledButton from "./commons/StyledButton";
+import {BrowserQRCodeReader} from "@zxing/browser";
 
 const QrScannerV3 = (props: any) => {
     const dispatch = useAppDispatch();
@@ -72,7 +71,7 @@ const QrScannerV3 = (props: any) => {
             }
         };
     }, [videoRef]);*/
-    useQrReader(
+    /*useQrReader(
         {
             videoId: "qr-code-scanner",
             constraints: {
@@ -90,7 +89,26 @@ const QrScannerV3 = (props: any) => {
             },
             scanDelay: 125
         }
-    );
+    );*/
+
+    useEffect(() => {
+        const codeReader = new BrowserQRCodeReader();
+        codeReader.decodeFromConstraints({video: {facingMode: "environment"}}, "qr-code-scanner",
+            (result, error, controls) => {
+
+            if (result) {
+                console.log("Result: ", result, result?.getText());
+                // stopVideoTrack();
+                dispatch(verificationInit({qrReadResult: {qrData: result.getText(), status: "SUCCESS"}}));
+                controls.stop();
+            }
+            })
+            .then(controls => {
+                // controls.stop();
+            })
+        ;
+        // codeReader.
+    }, []);
 
     return (
         <>
@@ -107,6 +125,9 @@ const QrScannerV3 = (props: any) => {
                             console.log((videoElement.srcObject as MediaStream)?.getVideoTracks());
                             setVideoTrack((videoElement.srcObject as MediaStream)?.getVideoTracks()[0]);
                         }
+                    }}
+                    onPause={() => {
+
                     }}
                     // onEnded={}
                 />
